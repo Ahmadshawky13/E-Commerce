@@ -24,6 +24,11 @@ export default function AddCartBtn({id}: {id:string}) {
     }
     }
   return (
-    <Button onClick={()=>addProduct(id)} className='bg-main w-full rounded-3xl cursor-pointer'> Add To Cart </Button>
+    <Button 
+      onClick={()=>addProduct(id)} 
+      className='bg-main rounded-3xl cursor-pointer w-full text-xs sm:text-sm py-1 px-3 sm:py-2 sm:px-4 h-8 sm:h-10'
+    >
+      Add To Cart
+    </Button>
   )
 }

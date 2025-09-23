@@ -6,23 +6,22 @@ import { Suspense } from "react";
 import { HomeLoading } from "./_component/HomeLoading/HomeLoading";
 
 export default async function Home() {
-  const res = await fetch (`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/products`)
-  const data:ProductData = await res.json()
-  const productList:product[] =data.data
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/products`);
+  const data: ProductData = await res.json();
+  const productList: product[] = data.data;
 
   return (
-     <>
-     <MainSlider/>
-      <h1>Home</h1>
-     <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-5">
-     <Suspense fallback={<HomeLoading/>}>
-{
-      productList.map((product)=>{
-        return <ProductCard key={product._id} product={product}/>
-      })
-     }
-     </Suspense>
-     </div>
-     </>
+    <>
+      <MainSlider />
+      <h1 className="text-2xl font-bold my-6 text-center">Home</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-5 px-4">
+        <Suspense fallback={<HomeLoading />}>
+          {productList.map((product) => {
+            return <ProductCard key={product._id} product={product} />;
+          })}
+        </Suspense>
+      </div>
+    </>
   );
 }

@@ -38,11 +38,12 @@ export default function AddWishlistBtn({ id }: { id: string }) {
   return (
     <Button
       onClick={() => toggleWishlist(id)}
-      className={`bg-transparent p-2 rounded-full ${
+      className={`bg-transparent p-1 sm:p-2 rounded-full ${
         added ? "text-green-500" : "text-red-500 hover:text-green-500 hover:bg-white"
       }`}
+      size="sm"
     >
-      <i className="fa fa-heart text-xl"></i>
+      <i className="fa fa-heart text-lg sm:text-xl"></i>
     </Button>
   )
 }

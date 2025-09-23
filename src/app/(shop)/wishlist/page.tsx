@@ -11,6 +11,12 @@ export default function Wishlist() {
   const [wishlistLoading, setWishlistLoading] = useState(false)
   const [Wishlist, setWishlist] = useState<WishlistData>()
 
+  // دالة لقص النص لأول كلمتين فقط
+  const truncateToTwoWords = (text: string) => {
+    const words = text.split(' ')
+    return words.slice(0, 2).join(' ') + (words.length > 2 ? '...' : '')
+  }
+
   useEffect(() => {
     getAllWishlistData()
   }, [])
@@ -43,8 +49,8 @@ export default function Wishlist() {
         <>
           {Wishlist?.data?.length ? (
             <>
-              {/* Wishlist Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Desktop Grid */}
+              <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {Wishlist.data.map((item: wishlist) => (
                   <div
                     key={item._id}
@@ -57,16 +63,64 @@ export default function Wishlist() {
                       height={200}
                       className="rounded-xl mb-4 object-contain"
                     />
-                    <h2 className="font-semibold text-lg">{item.title}</h2>
+                    <h2 className="font-semibold text-lg h-12 overflow-hidden">
+                      {truncateToTwoWords(item.title)}
+                    </h2>
                     <p className="text-sm text-gray-500">{item.brand?.name}</p>
                     <p className="text-red-500 font-bold mt-2">
                       {item.priceAfterDiscount ?? item.price}$
                     </p>
-                    <div className="flex gap-2 mt-4">
-                      <AddCartBtn id={item._id} />
+                    <div className="flex gap-2 mt-4 w-full">
+                      <div className="flex-1">
+                        <AddCartBtn id={item._id} />
+                      </div>
                       <Button
                         onClick={() => deleteProduct(item._id)}
                         variant="destructive"
+                        size="sm"
+                        className="whitespace-nowrap cursor-pointer"
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Mobile List */}
+              <div className="md:hidden space-y-4">
+                {Wishlist.data.map((item: wishlist) => (
+                  <div
+                    key={item._id}
+                    className="border rounded-2xl p-4 shadow-sm bg-white dark:bg-gray-800"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <Image
+                        src={item.imageCover}
+                        alt={item.title}
+                        width={80}
+                        height={80}
+                        className="rounded-xl object-contain flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h2 className="font-semibold text-base truncate">
+                          {truncateToTwoWords(item.title)}
+                        </h2>
+                        <p className="text-sm text-gray-500 truncate">{item.brand?.name}</p>
+                        <p className="text-red-500 font-bold mt-1">
+                          {item.priceAfterDiscount ?? item.price}$
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-4 w-full">
+                      <div className="flex-1">
+                        <AddCartBtn id={item._id} />
+                      </div>
+                      <Button
+                        onClick={() => deleteProduct(item._id)}
+                        variant="destructive"
+                        size="sm"
+                        className="whitespace-nowrap"
                       >
                         Remove
                       </Button>
