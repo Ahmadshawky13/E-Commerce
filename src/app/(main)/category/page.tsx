@@ -49,7 +49,7 @@ export default function Page() {
           }}
           className="text-xl md:text-2xl text-gray-600 mb-8"
         >
-          We're working hard to bring you something amazing!
+          We are working hard to bring you something amazing!
         </motion.p>
 
         <motion.div
