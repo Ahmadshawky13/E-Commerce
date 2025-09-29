@@ -20,9 +20,15 @@ export default function ProductCard({product}:{product:product}) {
   return (
     <Card className="rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between relative w-full sm:w-auto">
 
-      {/* رابط الكارد */}
+      <div 
+        className="absolute top-2 right-2 z-20"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <AddWishlistBtn id={_id.toString()} />
+      </div>
+
       <Link href={`/products/${_id.toString()}`}>
-        <CardHeader className="p-0 relative">
+        <CardHeader className="p-0">
           <Image 
             src={imageCover} 
             alt={title} 
@@ -30,14 +36,6 @@ export default function ProductCard({product}:{product:product}) {
             height={250} 
             className="w-full h-48 sm:h-56 md:h-64 lg:h-64 object-cover object-center rounded-t-2xl"
           />
-
-          {/* زرار القلب */}
-          <div 
-            className="absolute top-2 right-2 z-20"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <AddWishlistBtn id={_id.toString()} />
-          </div>
         </CardHeader>
 
         <CardContent className="p-4 space-y-1">
@@ -46,7 +44,6 @@ export default function ProductCard({product}:{product:product}) {
             {title.split(" ").slice(0,3).join(" ")}
           </CardTitle>   
 
-          {/* الوصف مختصر */}
           <CardDescription className="text-gray-500 text-xs line-clamp-2">
             {description}
           </CardDescription>
