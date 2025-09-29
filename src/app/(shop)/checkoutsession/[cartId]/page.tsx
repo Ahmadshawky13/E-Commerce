@@ -47,7 +47,7 @@ export default function Checkoutsession() {
     console.log("checkout response", data);
 
     if (data?.session?.url) {
-      window.open(data.session.url, "_blank");
+      window.open(data.session.url, "_self");
     } else {
       console.error("No checkout URL found", data);
     }
