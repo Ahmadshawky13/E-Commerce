@@ -10,7 +10,6 @@ export default function AddWishlistBtn({ id }: { id: string }) {
   async function toggleWishlist(productId: string) {
     try {
       if (!added) {
-        // ✅ إضافة للويش ليست
         const data = await addToWishlist(productId)
         if (data.status === "success") {
           toast.success(data.message, { position: "top-center" })
@@ -19,7 +18,6 @@ export default function AddWishlistBtn({ id }: { id: string }) {
           toast.error("Incorrect Item", { position: "top-center" })
         }
       } else {
-        // ❌ إزالة من الويش ليست
         const data = await removeFromWishlist(productId)
         if (data.status === "success") {
           toast.success("Product removed from wishlist!", {

@@ -1,5 +1,5 @@
 "use client";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   NavigationMenu,
@@ -18,6 +18,23 @@ export function Navbar() {
   const pathName = usePathname();
   const countData = useContext(CountContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY) {
+        setShowNavbar(false);
+      } else {
+        setShowNavbar(true);
+      }
+      setLastScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const MenuItems: { path: string; content: string; protected: boolean }[] = [
     { path: "/products", content: "Products", protected: false },
@@ -38,13 +55,16 @@ export function Navbar() {
   }
 
   return (
-    <>
+    <div
+      className={`sticky top-0 z-50 transition-transform duration-300 ${
+        showNavbar ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <NavigationMenu
         viewport={false}
-        className="max-w-full justify-between shadow-2xl px-5 py-6 relative"
+        className="max-w-full justify-between shadow-2xl px-5 py-6 bg-white"
       >
-        {/* Desktop Navigation */}
-        <NavigationMenuList className="hidden md:flex items-center gap-x-6 gap-y-4">
+        <NavigationMenuList className="hidden md:flex items-center gap-x-6">
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
               <Link href={"/"}>
@@ -131,7 +151,6 @@ export function Navbar() {
           )}
         </NavigationMenuList>
 
-        {/* Mobile Header */}
         <div className="flex md:hidden w-full justify-between items-center">
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
@@ -154,30 +173,22 @@ export function Navbar() {
           </button>
         </div>
 
-        {/* Desktop Auth Section */}
-        <NavigationMenuList className="hidden md:flex items-center gap-x-6">
+        <NavigationMenuList className="hidden md:flex items-center gap-x-6 ml-auto">
           {status == "authenticated" ? (
             <>
               <NavigationMenuItem>
-                <NavigationMenuLink
-                  asChild
-                  className={navigationMenuTriggerStyle()}
-                >
-                  <span className="bg-red-400 py-2 px-5 rounded-lg">
-                    Hi {data?.user.name}
-                  </span>
-                </NavigationMenuLink>
+                <span className="text-sm font-medium text-gray-700 bg-gray-100 py-2 px-4 rounded-full">
+                  Hi, {data?.user?.name?.split(" ")[0] || "User"}
+                </span>
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationMenuLink
-                  asChild
-                  className={navigationMenuTriggerStyle()}
+                <span
+                  className="cursor-pointer hover:text-red-500"
+                  onClick={logout}
                 >
-                  <span className="cursor-pointer" onClick={logout}>
-                    Logout
-                  </span>
-                </NavigationMenuLink>
+                  Logout
+                </span>
               </NavigationMenuItem>
             </>
           ) : (
@@ -189,7 +200,9 @@ export function Navbar() {
                       asChild
                       className={navigationMenuTriggerStyle()}
                     >
-                      <Link href={item.path}>{item.content}</Link>
+                      <Link href={item.path} className="hover:text-main">
+                        {item.content}
+                      </Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 );
@@ -198,145 +211,106 @@ export function Navbar() {
           )}
         </NavigationMenuList>
 
-        {/* Mobile Menu Overlay */}
         {isMenuOpen && (
           <div className="absolute top-full left-0 w-full bg-white shadow-lg md:hidden z-50">
             <div className="flex flex-col p-4 space-y-4">
-              {/* Menu Items */}
               {MenuItems.map((item) => {
                 return (
                   <NavigationMenuItem key={item.path}>
                     {item.protected && status == "authenticated" && (
-                      <NavigationMenuLink
-                        asChild
-                        className={navigationMenuTriggerStyle()}
+                      <Link
+                        className={`block py-2 ${
+                          pathName == item.path ? "text-main" : ""
+                        }`}
+                        href={item.path}
+                        onClick={() => setIsMenuOpen(false)}
                       >
-                        <Link
-                          className={`block py-2 ${
-                            pathName == item.path ? "text-main" : ""
-                          }`}
-                          href={item.path}
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {item.content}
-                        </Link>
-                      </NavigationMenuLink>
+                        {item.content}
+                      </Link>
                     )}
 
                     {!item.protected && (
-                      <NavigationMenuLink
-                        asChild
-                        className={navigationMenuTriggerStyle()}
+                      <Link
+                        className={`block py-2 ${
+                          pathName == item.path ? "text-main" : ""
+                        }`}
+                        href={item.path}
+                        onClick={() => setIsMenuOpen(false)}
                       >
-                        <Link
-                          className={`block py-2 ${
-                            pathName == item.path ? "text-main" : ""
-                          }`}
-                          href={item.path}
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {item.content}
-                        </Link>
-                      </NavigationMenuLink>
+                        {item.content}
+                      </Link>
                     )}
                   </NavigationMenuItem>
                 );
               })}
 
-              {/* Cart for Mobile */}
               {status == "authenticated" && (
                 <NavigationMenuItem>
-                  <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                    <Link
-                      className="relative flex items-center gap-1 py-2"
-                      href="/cart"
-                      onClick={() => setIsMenuOpen(false)}
+                  <Link
+                    className="relative flex items-center gap-2 py-2"
+                    href="/cart"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <span
+                      className={pathName === "/cart" ? "text-main" : "text-black"}
                     >
-                      <span
-                        className={pathName === "/cart" ? "text-main" : "text-black"}
-                      >
-                        Cart
-                      </span>
-                      <i
-                        className={`fa fa-shopping-cart ml-2 text-sm ${
-                          pathName === "/cart" ? "text-main" : ""
-                        }`}
-                      ></i>
-                      <span className="ml-2 bg-red-500 text-white text-xs w-5 h-5 flex justify-center items-center rounded-full">
-                        {countData?.count || 0}
-                      </span>
-                    </Link>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              )}
-
-              {/* Wishlist for Mobile */}
-              {status == "authenticated" && (
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                    <Link
-                      className={`block py-2 ${
-                        pathName === "/wishlist" ? "text-main" : "text-black"
+                      Cart
+                    </span>
+                    <i
+                      className={`fa fa-shopping-cart text-sm ${
+                        pathName === "/cart" ? "text-main" : ""
                       }`}
-                      href="/wishlist"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Wishlist
-                    </Link>
-                  </NavigationMenuLink>
+                    ></i>
+                    <span className="bg-red-500 text-white text-xs w-5 h-5 flex justify-center items-center rounded-full">
+                      {countData?.count || 0}
+                    </span>
+                  </Link>
                 </NavigationMenuItem>
               )}
 
-              {/* Auth Section for Mobile */}
+              {status == "authenticated" && (
+                <NavigationMenuItem>
+                  <Link
+                    className={`block py-2 ${
+                      pathName === "/wishlist" ? "text-main" : "text-black"
+                    }`}
+                    href="/wishlist"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Wishlist
+                  </Link>
+                </NavigationMenuItem>
+              )}
+
               <div className="border-t pt-4 mt-4">
                 {status == "authenticated" ? (
                   <>
-                    <NavigationMenuItem>
-                      <NavigationMenuLink
-                        asChild
-                        className={navigationMenuTriggerStyle()}
-                      >
-                        <span className="block bg-red-400 py-2 px-5 rounded-lg mb-2">
-                          Hi {data?.user.name}
-                        </span>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
+                    <span className="block text-sm font-medium text-gray-700 bg-gray-100 py-2 px-4 rounded-full mb-3">
+                      Hi, {data?.user?.name?.split(" ")[0] || "User"}
+                    </span>
 
-                    <NavigationMenuItem>
-                      <NavigationMenuLink
-                        asChild
-                        className={navigationMenuTriggerStyle()}
-                      >
-                        <span 
-                          className="block cursor-pointer py-2" 
-                          onClick={() => {
-                            logout();
-                            setIsMenuOpen(false);
-                          }}
-                        >
-                          Logout
-                        </span>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
+                    <span
+                      className="block cursor-pointer py-2 hover:text-red-500"
+                      onClick={() => {
+                        logout();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      Logout
+                    </span>
                   </>
                 ) : (
                   <>
                     {MenuAuthItems.map((item) => {
                       return (
-                        <NavigationMenuItem key={item.path}>
-                          <NavigationMenuLink
-                            asChild
-                            className={navigationMenuTriggerStyle()}
-                          >
-                            <Link 
-                              href={item.path} 
-                              className="block py-2"
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              {item.content}
-                            </Link>
-                          </NavigationMenuLink>
-                        </NavigationMenuItem>
+                        <Link
+                          key={item.path}
+                          href={item.path}
+                          className="block py-2 hover:text-main"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {item.content}
+                        </Link>
                       );
                     })}
                   </>
@@ -346,6 +320,6 @@ export function Navbar() {
           </div>
         )}
       </NavigationMenu>
-    </>
+    </div>
   );
 }

@@ -13,9 +13,9 @@ export default async function Home() {
   return (
     <>
       <MainSlider />
-      <h1 className="text-2xl font-bold my-6 text-center">Home</h1>
+      <h1 className="text-2xl font-bold my-6 text-center">Our Products</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-5 px-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6 px-4">
         <Suspense fallback={<HomeLoading />}>
           {productList.map((product) => {
             return <ProductCard key={product._id} product={product} />;
