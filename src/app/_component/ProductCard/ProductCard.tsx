@@ -1,5 +1,4 @@
 'use client'
-
 import React from 'react'
 import {
   Card,
@@ -16,11 +15,12 @@ import Link from 'next/link';
 import AddWishlistBtn from '../WishlistButton/WishlistButton';
 
 export default function ProductCard({product}:{product:product}) {
-  const { imageCover, title, ratingsAverage, price, category:{name}, _id } = product;
+  const { imageCover, title, ratingsAverage, price, category:{name}, _id, description } = product;
 
   return (
-    <Card className="rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between relative">
+    <Card className="rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col justify-between relative w-full sm:w-auto">
 
+      {/* رابط الكارد */}
       <Link href={`/products/${_id.toString()}`}>
         <CardHeader className="p-0 relative">
           <Image 
@@ -28,9 +28,10 @@ export default function ProductCard({product}:{product:product}) {
             alt={title} 
             width={400} 
             height={250} 
-            className="w-full h-[200px] object-cover object-center rounded-t-2xl"
+            className="w-full h-48 sm:h-56 md:h-64 lg:h-64 object-cover object-center rounded-t-2xl"
           />
 
+          {/* زرار القلب */}
           <div 
             className="absolute top-2 right-2 z-20"
             onClick={(e) => e.stopPropagation()}
@@ -39,26 +40,27 @@ export default function ProductCard({product}:{product:product}) {
           </div>
         </CardHeader>
 
-        <CardContent className="p-4 space-y-2">
-          <CardTitle className="text-main text-lg">{name}</CardTitle>
-          <CardTitle className="text-gray-700 text-base truncate">
+        <CardContent className="p-4 space-y-1">
+          <CardTitle className="text-main text-lg truncate">{name}</CardTitle>
+          <CardTitle className="text-gray-700 text-sm truncate">
             {title.split(" ").slice(0,3).join(" ")}
           </CardTitle>   
- 
-          <div className="flex justify-between items-center text-sm font-medium">
+
+          {/* الوصف مختصر */}
+          <CardDescription className="text-gray-500 text-xs line-clamp-2">
+            {description}
+          </CardDescription>
+
+          <div className="flex justify-between items-center text-sm font-medium mt-1">
             <span className="text-green-600 text-base font-semibold">{price} EGP</span>
             <span className="flex items-center gap-1 text-yellow-500">
               <i className='fa-solid fa-star'></i> {ratingsAverage}
             </span>
           </div>
-
-          <CardDescription className="text-gray-500 text-sm">
-            Card Description
-          </CardDescription>
         </CardContent>
       </Link>
 
-      <CardFooter className="p-4 border-t mt-auto flex flex-col gap-2">
+      <CardFooter className="p-4 border-t mt-auto flex justify-center">
         <AddCartBtn id={_id.toString()} />
       </CardFooter>
     </Card>
